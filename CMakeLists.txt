@@ -12,6 +12,16 @@ project(exiv2          # use TWEAK to categorize the build
     LANGUAGES C CXX
 )
 
+# Shared Object versioning (simplified Libtool scheme):
+#   If the source code has changed, but there were no interface changes, increment REVISION.
+#   If there was a compatible interface change, increment MINOR and set REVISION back to 0.
+#   If there was an incompatible interface change, increment MAJOR, and set MINOR and REVISION back to 0.
+set(EXIV2LIB_MAJOR 28)
+set(EXIV2LIB_MINOR 0)
+set(EXIV2LIB_REVISION 0)
+set(EXIV2LIB_VERSION "${EXIV2LIB_MAJOR}.${EXIV2LIB_MINOR}.${EXIV2LIB_REVISION}")
+set(EXIV2LIB_SOVERSION "${EXIV2LIB_MAJOR}")
+
 if(NOT CMAKE_BUILD_TYPE)
   set (CMAKE_BUILD_TYPE Release)
 endif()
