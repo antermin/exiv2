@@ -53,6 +53,7 @@
 #include "bmpimage.hpp"
 #include "jp2image.hpp"
 #include "nikonmn_int.hpp"
+#include "jxlimage.hpp"
 
 #ifdef   EXV_ENABLE_VIDEO
 #include "matroskavideo.hpp"
@@ -132,6 +133,7 @@ namespace {
         { ImageType::tga,  newTgaInstance,  isTgaType,  amNone,      amNone,      amNone,      amNone      },
         { ImageType::bmp,  newBmpInstance,  isBmpType,  amNone,      amNone,      amNone,      amNone      },
         { ImageType::jp2,  newJp2Instance,  isJp2Type,  amReadWrite, amReadWrite, amReadWrite, amNone      },
+        { ImageType::jxl,  newJxlInstance,  isJxlType,  amNone,      amNone,      amNone,      amNone      },
 #ifdef EXV_ENABLE_BMFF
         { ImageType::bmff, newBmffInstance, isBmffType, amRead,      amRead,      amRead,      amNone      },
 #endif // EXV_ENABLE_BMFF
