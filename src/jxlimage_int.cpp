@@ -21,8 +21,12 @@ namespace Internal {
         return c[dist] + getBits(u[dist]);
     }
 
-    void parseJxlDimensions(JxlStream *stream) {
-            stream->position = 16; // skip signature
+    void parseJxlDimensions(JxlStream *stream, bool nosig) {
+            if (nosig) { // stream has no signature, no need to skip
+                stream->position = 0;
+            } else { // stream has signature, we need to skip
+                stream->position = 16;
+            }
 
             int div8 = stream->getBits(1);
             if (div8) {

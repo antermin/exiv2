@@ -92,7 +92,7 @@ namespace Exiv2
             for(int i = 0; i < 11; ++i){
                 jxlstream.databits = jxlstream.databits + static_cast<uint64_t>(data.pData_[i]*(pow(static_cast<float>(256), i)));
             }
-            Internal::parseJxlDimensions(&jxlstream);
+            Internal::parseJxlDimensions(&jxlstream, false); // false: !nosig
             pixelHeight_ = jxlstream.height;
             pixelWidth_ = jxlstream.width;
         }

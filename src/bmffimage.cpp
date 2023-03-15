@@ -35,11 +35,13 @@
 #include "safe_op.hpp"
 #include "tiffimage.hpp"
 #include "tiffimage_int.hpp"
+#include "jxlimage_int.hpp"
 #include "types.hpp"
 #include "unused.h"
 
 // + standard includes
 #include <cassert>
+#include <cmath>
 #include <cstdio>
 #include <cstring>
 #include <iostream>
@@ -57,6 +59,8 @@
 #define TAG_mif1 0x6d696631 /**< "mif1" HEIF */
 #define TAG_crx  0x63727820 /**< "crx " Canon CR3 */
 #define TAG_jxl  0x6a786c20 /**< "JXL " JPEG XL   */
+#define TAG_jxlc 0x6a786c63 /**< "jxlc" JPEG XL codestream */
+#define TAG_jxlp 0x6a786c70 /**< "jxlp" JPEG XL partial codestream */
 #define TAG_moov 0x6d6f6f76 /**< "moov" Movie */
 #define TAG_meta 0x6d657461 /**< "meta" Metadata */
 #define TAG_mdat 0x6d646174 /**< "mdat" Media data */
@@ -188,6 +192,13 @@ namespace Exiv2
                              : std::memcmp(uuid.pData_, uuidXmp, 16) == 0  ? "xmp"
                              : std::memcmp(uuid.pData_, uuidCanp, 16) == 0 ? "canp"
                                                                            : "";
+        return result;
+    }
+
+    bool BmffImage::hasJxlHeader(Exiv2::DataBuf& jxlpdata)
+    {
+        const char* JxlHeader = "\x00\x00\x00\x00\xFF\x0A";
+        bool result = std::memcmp(jxlpdata.pData_, JxlHeader, 6) == 0 ? true : false;
         return result;
     }
 
@@ -509,6 +520,34 @@ namespace Exiv2
                         break;
                 }
                 break;
+            case TAG_jxlp: {
+                DataBuf sig(6); // 4 bytes padding + 2 bytes sig
+                io_->read(sig.pData_, sig.size_);
+                if (hasJxlHeader(sig)) {
+                    DataBuf streamdata(9); // Max 11 bytes - 2 bytes sig
+                    io_->read(streamdata.pData_, streamdata.size_);
+                    Internal::JxlStream jxlstream;
+                    //! Function used to convert buffer data into 64-bit Integer, information stored in littleEndian format
+                    jxlstream.databits = 0;
+                    for(int i; i < 9; ++i){
+                        jxlstream.databits = jxlstream.databits + static_cast<uint64_t>(streamdata.pData_[i]*(pow(static_cast<float>(256), i)));
+                    }
+                    Internal::parseJxlDimensions(&jxlstream, true); // true: nosig
+                    pixelHeight_ = jxlstream.height;
+                    pixelWidth_ = jxlstream.width;
+                }
+            } break;
+            case TAG_jxlc: {
+                Internal::JxlStream jxlstream;
+                //! Function used to convert buffer data into 64-bit Integer, information stored in littleEndian format
+                jxlstream.databits = 0;
+                for(int i; i < 11; ++i){
+                    jxlstream.databits = jxlstream.databits + static_cast<uint64_t>(data.pData_[i]*(pow(static_cast<float>(256), i)));
+                }
+                Internal::parseJxlDimensions(&jxlstream, false); // false: !nosig
+                pixelHeight_ = jxlstream.height;
+                pixelWidth_ = jxlstream.width;
+            } break;
 
             default: break ; /* do nothing */
         }

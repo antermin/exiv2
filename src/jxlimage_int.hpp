@@ -17,7 +17,7 @@ namespace Exiv2 {
                 uint64_t readU32(int, int, int, int, int, int, int, int);
         }; // class JxlStream
 
-        void parseJxlDimensions(JxlStream *stream);
+        void parseJxlDimensions(JxlStream *stream, bool nosig);
     }  // namespace Internal
 }  // namespace Exiv2
 
