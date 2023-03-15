@@ -28,6 +28,7 @@
 
 #include "basicio.hpp"
 #include "jxlimage.hpp"
+#include "jxlimage_int.hpp"
 #include "error.hpp"
 #include "futils.hpp"
 #include "image.hpp"
@@ -38,50 +39,8 @@
 #include <iostream>
 #include <string>
 
-// *****************************************************************************
-namespace {
-    class JxlStream {
-        public:
-            uint64_t databits;
-            int position;
-            uint64_t getBits(int);
-            uint64_t readU32(int, int, int, int, int, int, int, int);
-    }; // class JxlStream
-
-    uint64_t JxlStream::getBits(int length) {
-        uint64_t bitmask = (1 << length) -1;
-        uint64_t value = (databits >> position) & bitmask;
-        position += length; //advance position after getting bits
-        return value;
-    }
-
-    uint64_t JxlStream::readU32(int c0, int u0, int c1, int u1, int c2, int u2, int c3, int u3) {
-        int dist = getBits(2);
-        int c[] = {c0, c1, c2, c3};
-        int u[] = {u0, u1, u2, u3};
-        return c[dist] + getBits(u[dist]);
-    }
-}
-
-// *****************************************************************************
-// class member definitions
-namespace Exiv2 {
-    namespace Internal {
-        //! Function used to convert buffer data into 64-bit Integer, information stored in littleEndian format
-        uint64_t getUint64_t_jxl(Exiv2::DataBuf& buf) {
-            uint64_t temp = 0;
-
-            for(int i = 0; i < 11; ++i){
-                temp = temp + static_cast<uint64_t>(buf.pData_[i]*(pow(static_cast<float>(256), i)));
-            }
-            return temp;
-        }
-    }
-}
 namespace Exiv2
 {
-    using namespace Exiv2::Internal;
-
     JxlImage::JxlImage(BasicIo::AutoPtr io) : Image(ImageType::jxl, mdNone, io)
     {
     }
@@ -127,46 +86,15 @@ namespace Exiv2
 
         DataBuf data(11); // 11 bytes at most for width and height
         if (io_->read(data.pData_, data.size_)) {
-            JxlStream jxlstream;
-            jxlstream.databits = getUint64_t_jxl(data);
-            jxlstream.position = 16; // skip signature
-            
-            int div8 = jxlstream.getBits(1);
-            if (div8) {
-                pixelHeight_ = (1 + jxlstream.getBits(5)) << 3; // multiply 8
-            } else {
-                pixelHeight_ = jxlstream.readU32(1, 9, 1, 13, 1, 18, 1, 30);
+            Internal::JxlStream jxlstream;
+            //! Function used to convert buffer data into 64-bit Integer, information stored in littleEndian format
+            jxlstream.databits = 0;
+            for(int i = 0; i < 11; ++i){
+                jxlstream.databits = jxlstream.databits + static_cast<uint64_t>(data.pData_[i]*(pow(static_cast<float>(256), i)));
             }
-            int ratio = jxlstream.getBits(3);
-            if ((div8) && (!ratio)) {
-                pixelWidth_ = (1 + jxlstream.getBits(5)) << 3; // multiply 8
-            } else if (!ratio) {
-                pixelWidth_ = jxlstream.readU32(1, 9, 1, 13, 1, 18, 1, 30);
-            } else {
-                switch (ratio) {
-                    case 1:
-                        pixelWidth_ = pixelHeight_;
-                        break;
-                    case 2:
-                        pixelWidth_ = (pixelHeight_ * 12) / 10;
-                        break;
-                    case 3:
-                        pixelWidth_ = (pixelHeight_ * 4) / 3;
-                        break;
-                    case 4:
-                        pixelWidth_ = (pixelHeight_ * 3) / 2;
-                        break;
-                    case 5:
-                        pixelWidth_ = (pixelHeight_ * 16) / 9;
-                        break;
-                    case 6:
-                        pixelWidth_ = (pixelHeight_ * 5) / 4;
-                        break;
-                    case 7:
-                        pixelWidth_ = (pixelHeight_ * 2);
-                        break;
-                }
-            }
+            Internal::parseJxlDimensions(&jxlstream);
+            pixelHeight_ = jxlstream.height;
+            pixelWidth_ = jxlstream.width;
         }
     }
 
