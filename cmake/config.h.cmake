@@ -74,6 +74,9 @@
 // Define if you have are using the zlib library.
 #cmakedefine EXV_HAVE_LIBZ
 
+// Define if you have the brotli library.
+#cmakedefine EXV_HAVE_BROTLI
+
 // Define if you have the <process.h> header file.
 #cmakedefine EXV_HAVE_PROCESS_H
 

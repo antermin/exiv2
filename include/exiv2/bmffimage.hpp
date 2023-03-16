@@ -182,6 +182,13 @@ namespace Exiv2
         std::string uuidName(Exiv2::DataBuf& uuid);
         bool        hasJxlHeader(Exiv2::DataBuf& jxlpdata);
 
+        /*!
+          @brief Wrapper around brotli to uncompress JXL brob content.
+        */
+#ifdef EXV_HAVE_BROTLI
+  static void brotliUncompress(const byte* compressedBuf, size_t compressedBufSize, DataBuf& arr);
+#endif
+
     };  // class BmffImage
 
     // *****************************************************************************

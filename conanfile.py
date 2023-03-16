@@ -23,6 +23,8 @@ class Exiv2Conan(ConanFile):
     def requirements(self):
         self.requires('zlib/1.2.12')
 
+        self.requires('brotli/1.0.9')
+
         if os_info.is_windows and self.options.iconv:
             self.requires('libiconv/1.16')
 

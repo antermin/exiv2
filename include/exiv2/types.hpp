@@ -258,6 +258,11 @@ namespace Exiv2 {
         byte* pData_;
         //! The current size of the buffer
         long size_;
+
+          //! Returns a (read-only) data pointer.
+          const byte* c_data(size_t offset = 0) const;
+          //! Returns a (read-only) C-style string pointer.
+           const char* c_str(size_t offset = 0) const;
     }; // class DataBuf
 
     /*!

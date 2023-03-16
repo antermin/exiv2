@@ -23,6 +23,7 @@ else()
 endif()
 set(EXV_HAVE_ICONV       ${ICONV_FOUND})
 set(EXV_HAVE_LIBZ        ${ZLIB_FOUND})
+set(EXV_HAVE_BROTLI      ${BROTLI_FOUND})
 set(EXV_UNICODE_PATH     ${EXIV2_ENABLE_WIN_UNICODE})
 
 check_cxx_symbol_exists(gmtime_r    time.h         EXV_HAVE_GMTIME_R)

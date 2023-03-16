@@ -194,6 +194,14 @@ namespace Exiv2 {
 
     Exiv2::DataBuf::operator DataBufRef() { return DataBufRef(release()); }
 
+const byte* Exiv2::DataBuf::c_data(size_t offset) const {
+  return &pData_[offset];
+}
+
+const char* Exiv2::DataBuf::c_str(size_t offset) const {
+  return reinterpret_cast<const char*>(c_data(offset));
+}
+
     // *************************************************************************
     // free functions
 

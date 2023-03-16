@@ -25,6 +25,10 @@ if( EXIV2_ENABLE_PNG )
     find_package( ZLIB REQUIRED )
 endif( )
 
+if( EXIV2_ENABLE_BMFF AND EXIV2_ENABLE_BROTLI )
+    find_package( Brotli REQUIRED )
+endif( )
+
 if( EXIV2_ENABLE_WEBREADY )
     if( EXIV2_ENABLE_CURL )
         find_package(CURL REQUIRED)
