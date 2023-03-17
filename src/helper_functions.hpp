@@ -58,5 +58,10 @@ std::string utf16ToUtf8(const std::wstring& wstr);
  */
 [[nodiscard]] std::string getAspectRatio(uint64_t width, uint64_t height);
 
+/*!
+  @brief Converts buffer data into 64-bit Integer, information stored in littleEndian format
+ */
+[[nodiscard]] uint64_t getUint64_t(Exiv2::DataBuf& buf);
+
 }  // namespace Exiv2
 #endif  // HELPER_FUNCTIONS_HPP
