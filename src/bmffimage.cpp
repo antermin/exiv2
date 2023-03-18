@@ -142,7 +142,7 @@ std::string BmffImage::mimeType() const {
 uint32_t BmffImage::pixelWidth() const {
   auto imageWidth = exifData_.findKey(Exiv2::ExifKey("Exif.Photo.PixelXDimension"));
   if (imageWidth != exifData_.end() && imageWidth->count() > 0) {
-    return imageWidth->toUint32();
+    return (pixelWidth_ > 0 ? pixelWidth_ : imageWidth->toUint32());
   }
   return pixelWidth_;
 }
@@ -150,7 +150,7 @@ uint32_t BmffImage::pixelWidth() const {
 uint32_t BmffImage::pixelHeight() const {
   auto imageHeight = exifData_.findKey(Exiv2::ExifKey("Exif.Photo.PixelYDimension"));
   if (imageHeight != exifData_.end() && imageHeight->count() > 0) {
-    return imageHeight->toUint32();
+    return (pixelHeight_ > 0 ? pixelHeight_ : imageHeight->toUint32());
   }
   return pixelHeight_;
 }
