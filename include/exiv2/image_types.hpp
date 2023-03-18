@@ -20,6 +20,7 @@ enum class ImageType {
   gif,  //!< GIF
   jp2,  //!< JPEG-2000
   jpeg,
+  jxl,  ///< JPEG XL (JXL)
   mrw,
   nef,
   orf,

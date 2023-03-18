@@ -20,6 +20,8 @@ add_library(
   image_int.hpp
   jp2image_int.cpp
   jp2image_int.hpp
+  jxlimage_int.cpp
+  jxlimage_int.hpp
   makernote_int.cpp
   makernote_int.hpp
   minoltamn_int.cpp
@@ -78,6 +80,7 @@ set(PUBLIC_HEADERS
     ../include/exiv2/iptc.hpp
     ../include/exiv2/jp2image.hpp
     ../include/exiv2/jpgimage.hpp
+    ../include/exiv2/jxlimage.hpp
     ../include/exiv2/metadatum.hpp
     ../include/exiv2/mrwimage.hpp
     ../include/exiv2/orfimage.hpp
@@ -122,6 +125,7 @@ add_library(
   iptc.cpp
   jp2image.cpp
   jpgimage.cpp
+  jxlimage.cpp
   metadatum.cpp
   mrwimage.cpp
   orfimage.cpp
