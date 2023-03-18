@@ -11,10 +11,12 @@
 #include "image.hpp"
 #include "image_int.hpp"
 #include "safe_op.hpp"
+#include "jxlimage_int.hpp"
 #include "tiffimage.hpp"
 #include "tiffimage_int.hpp"
 #include "types.hpp"
 #include "utils.hpp"
+#include "helper_functions.hpp"
 
 #ifdef EXV_HAVE_BROTLI
 #include <brotli/decode.h>  // for JXL brob
@@ -39,6 +41,8 @@
 #define TAG_mif1 0x6d696631 /**< "mif1" HEIF */
 #define TAG_crx 0x63727820  /**< "crx " Canon CR3 */
 #define TAG_jxl 0x6a786c20  /**< "jxl " JPEG XL file type */
+#define TAG_jxlc 0x6a786c63 /**< "jxlc" JPEG XL codestream */
+#define TAG_jxlp 0x6a786c70 /**< "jxlp" JPEG XL partial codestream */
 #define TAG_moov 0x6d6f6f76 /**< "moov" Movie */
 #define TAG_meta 0x6d657461 /**< "meta" Metadata */
 #define TAG_mdat 0x6d646174 /**< "mdat" Media data */
@@ -162,6 +166,11 @@ std::string BmffImage::uuidName(const Exiv2::DataBuf& uuid) {
   if (uuid.cmpBytes(0, uuidCanp, 16) == 0)
     return "canp";
   return "";
+}
+
+bool BmffImage::hasJxlHeader(const Exiv2::DataBuf& jxlpdata) {
+  const char* JxlHeader = "\x00\x00\x00\x00\xFF\x0A";
+  return (jxlpdata.cmpBytes(0, JxlHeader, 6) == 0 ? true : false);
 }
 
 #ifdef EXV_HAVE_BROTLI
@@ -571,6 +580,31 @@ uint64_t BmffImage::boxHandler(std::ostream& out /* = std::cout*/, Exiv2::PrintS
           break;
       }
       break;
+    case TAG_jxlp: {
+      DataBuf sig(6); // 4 bytes padding + 2 bytes sig
+      io_->read(sig.data(), sig.size());
+      if (hasJxlHeader(sig)) {
+#ifdef EXIV2_DEBUG_MESSAGES
+        std::cerr << "Exiv2::BmffImage::boxHandler: JXL Header found in this jxlp box" << "\n";
+#endif
+        DataBuf streamdata(9); // Max 11 bytes - 2 bytes sig
+        io_->read(streamdata.data(), streamdata.size());
+        Internal::JxlStream jxlstream;
+        jxlstream.databits = getUint64_t(streamdata);
+        Internal::parseJxlDimensions(&jxlstream, true); // true: nosig
+        pixelHeight_ = jxlstream.height;
+        pixelWidth_ = jxlstream.width;
+      }
+    } break;
+    case TAG_jxlc: {
+      DataBuf streamdata(11);
+      io_->read(streamdata.data(), streamdata.size());
+      Internal::JxlStream jxlstream;
+      jxlstream.databits = getUint64_t(streamdata);
+      Internal::parseJxlDimensions(&jxlstream, false); // false: !nosig
+      pixelHeight_ = jxlstream.height;
+      pixelWidth_ = jxlstream.width;
+    } break;
 
     default:
       break; /* do nothing */
