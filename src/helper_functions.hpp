@@ -20,7 +20,10 @@
 #ifndef HELPER_FUNCTIONS_HPP
 #define HELPER_FUNCTIONS_HPP
 
+#include <cmath>
 #include <string>
+#include "basicio.hpp"
+#include "types.hpp"
 
 /*!
   @brief Convert a (potentially not null terminated) array into a
@@ -38,5 +41,11 @@
 
  */
 std::string string_from_unterminated(const char* data, size_t data_length);
+
+/*!
+  @brief Converts buffer data into 64-bit Integer, information stored
+  in littleEndian format
+ */
+uint64_t getUint64_t(Exiv2::DataBuf& buf);
 
 #endif  // HELPER_FUNCTIONS_HPP

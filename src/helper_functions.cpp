@@ -27,3 +27,12 @@ std::string string_from_unterminated(const char* data, size_t data_length)
 
     return std::string(data, StringLength);
 }
+
+uint64_t getUint64_t(Exiv2::DataBuf& buf) {
+    uint64_t temp = 0;
+
+    for(size_t i = 0; i < static_cast<size_t>(buf.size_); ++i){
+        temp = temp + static_cast<uint64_t>(buf.pData_[i]*(pow(static_cast<float>(256), i)));
+    }
+    return temp;
+}
