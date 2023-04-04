@@ -180,6 +180,7 @@ namespace Exiv2
         bool        superBox(uint32_t box);
         bool        fullBox(uint32_t box);
         std::string uuidName(Exiv2::DataBuf& uuid);
+        bool        hasJxlHeader(Exiv2::DataBuf& jxlpdata);
 
     };  // class BmffImage
 
