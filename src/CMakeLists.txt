@@ -20,6 +20,7 @@ add_library( exiv2lib_int OBJECT
     helper_functions.cpp    helper_functions.hpp
     image_int.cpp           image_int.hpp
     jp2image_int.cpp        jp2image_int.hpp
+    jxlimage_int.cpp        jxlimage_int.hpp
     makernote_int.cpp       makernote_int.hpp
     minoltamn_int.cpp       minoltamn_int.hpp
     nikonmn_int.cpp         nikonmn_int.hpp
@@ -64,6 +65,7 @@ add_library( exiv2lib
     iptc.cpp                ../include/exiv2/iptc.hpp
     jp2image.cpp            ../include/exiv2/jp2image.hpp
     jpgimage.cpp            ../include/exiv2/jpgimage.hpp
+    jxlimage.cpp            ../include/exiv2/jxlimage.hpp
     metadatum.cpp           ../include/exiv2/metadatum.hpp
     mrwimage.cpp            ../include/exiv2/mrwimage.hpp
     orfimage.cpp            ../include/exiv2/orfimage.hpp

@@ -21,6 +21,7 @@ install(FILES
             iptc.hpp
             jp2image.hpp
             jpgimage.hpp
+            jxlimage.hpp
             matroskavideo.hpp
             metadatum.hpp
             mrwimage.hpp
