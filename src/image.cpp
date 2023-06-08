@@ -26,6 +26,7 @@
 #include "bmpimage.hpp"
 #include "gifimage.hpp"
 #include "jp2image.hpp"
+#include "jxlimage.hpp"
 #include "nikonmn_int.hpp"
 #include "orfimage.hpp"
 #include "pgfimage.hpp"
@@ -103,6 +104,7 @@ constexpr Registry registry[] = {
     {ImageType::tga, newTgaInstance, isTgaType, amNone, amNone, amNone, amNone},
     {ImageType::bmp, newBmpInstance, isBmpType, amNone, amNone, amNone, amNone},
     {ImageType::jp2, newJp2Instance, isJp2Type, amReadWrite, amReadWrite, amReadWrite, amNone},
+    {ImageType::jxl, newJxlInstance, isJxlType, amNone, amNone, amNone, amNone},
 // needs to be before bmff because some ftyp files are handled as qt and
 // the rest should fall through to bmff
 #ifdef EXV_ENABLE_VIDEO
