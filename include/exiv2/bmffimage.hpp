@@ -148,6 +148,7 @@ class EXIV2API BmffImage : public Image {
   static bool superBox(uint32_t box);
   static bool fullBox(uint32_t box);
   static std::string uuidName(const Exiv2::DataBuf& uuid);
+  bool hasJxlHeader(const Exiv2::DataBuf& jxlpdata);
 
   /*!
     @brief Wrapper around brotli to uncompress JXL brob content.
