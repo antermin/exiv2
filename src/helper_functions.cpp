@@ -62,4 +62,13 @@ std::string getAspectRatio(uint64_t width, uint64_t height) {
   return std::to_string(ratioWidth) + ":" + std::to_string(ratioHeight);
 }
 
+uint64_t getUint64_t(Exiv2::DataBuf& buf) {
+    uint64_t temp = 0;
+
+    for(size_t i = 0; i < buf.size(); ++i){
+        temp = temp + static_cast<uint64_t>((buf.read_uint8(i))*(pow(static_cast<float>(256), static_cast<float>(i))));
+    }
+    return temp;
+}
+
 }  // namespace Exiv2
